@@ -8,5 +8,6 @@ gem "sprockets-rails", github: "rails/sprockets-rails", branch: "master"
 gem "sass-rails", github: "rails/sass-rails"
 gem "activemodel-serializers-xml"
 gem "activerecord-jdbcpostgresql-adapter", github: "jruby/activerecord-jdbc-adapter", branch: "rails-5", platforms: :jruby
+gem "cloudfront-signer", github: "leonelgalan/cloudfront-signer"
 
 gemspec :path => "../"

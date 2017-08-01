@@ -14,9 +14,9 @@ module CarrierWave
       #
       # [String] the location where this file is accessible via a url
       #
-      def url(options = {})
+      def url(options = { sign_url: true })
         if file.respond_to?(:url) and not (tmp_url = file.url).blank?
-          if Aws::CF::Signer.is_configured?
+          if Aws::CF::Signer.is_configured? and options[:sign_url]
             file.method(:url).arity == 0 ? Aws::CF::Signer.sign_url(tmp_url) : Aws::CF::Signer.sign_url(file.url(options))
           else
             file.method(:url).arity == 0 ? tmp_url : file.url(options)
@@ -26,12 +26,12 @@ module CarrierWave
 
           if host = asset_host
             if host.respond_to? :call
-              Aws::CF::Signer.is_configured? ? Aws::CF::Signer.sign_url("#{host.call(file)}#{path}") : "#{host.call(file)}#{path}"
+              (Aws::CF::Signer.is_configured? and options[:sign_url]) ? Aws::CF::Signer.sign_url("#{host.call(file)}#{path}") : "#{host.call(file)}#{path}"
             else
-              Aws::CF::Signer.is_configured? ? Aws::CF::Signer.sign_url("#{host}#{path}") : "#{host}#{path}"
+              (Aws::CF::Signer.is_configured? and options[:sign_url]) ? Aws::CF::Signer.sign_url("#{host}#{path}") : "#{host}#{path}"
             end
           else
-            Aws::CF::Signer.is_configured? ? Aws::CF::Signer.sign_url((base_path || "") + path) : (base_path || "") + path
+            (Aws::CF::Signer.is_configured? and options[:sign_url]) ? Aws::CF::Signer.sign_url((base_path || "") + path) : (base_path || "") + path
           end
         end
       end
